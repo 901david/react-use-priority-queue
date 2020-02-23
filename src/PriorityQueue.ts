@@ -3,7 +3,7 @@ interface IPriorityQueueNode {
   readonly priority: number;
 }
 
-class PriorityQueueNode implements IPriorityQueueNode {
+export class PriorityQueueNode implements IPriorityQueueNode {
   constructor(readonly data: any, readonly priority: number) {}
 }
 
@@ -28,6 +28,7 @@ abstract class PriorityQueue implements IPriorityQueue {
     rightIdx: number,
     valIdx: number
   ): number;
+  abstract clone(): any;
 
   getNode(idx: number): PriorityQueueNode {
     return this.queue[idx];
@@ -86,6 +87,10 @@ export class PriorityQueueMax extends PriorityQueue {
     const hasDataToBeProcessed =
       data !== undefined && Array.isArray(data) && data.length > 0;
     if (hasDataToBeProcessed) this.buildQueue(data);
+  }
+
+  clone() {
+    return new PriorityQueueMax(this.queue.concat());
   }
 
   getIndexForSwap(leftIdx: number, rightIdx: number, valIdx: number) {
@@ -157,6 +162,10 @@ export class PriorityQueueMin extends PriorityQueue {
     const hasDataToBeProcessed =
       data !== undefined && Array.isArray(data) && data.length > 0;
     if (hasDataToBeProcessed) this.buildQueue(data);
+  }
+
+  clone() {
+    return new PriorityQueueMin(this.queue.concat());
   }
 
   getIndexForSwap(leftIdx: number, rightIdx: number, valIdx: number) {

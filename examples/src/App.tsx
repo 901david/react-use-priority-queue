@@ -1,26 +1,32 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import styled from "styled-components";
+import { usePriorityQueue } from "react-use-priority-queue";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const Wrapper = styled.div`
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td,
+  th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+`;
+interface IInitialData {}
+
+const InitialData = {};
+
+const App = () => {
+  const [] = usePriorityQueue();
+  return <Wrapper></Wrapper>;
+};
 
 export default App;
