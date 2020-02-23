@@ -1,4 +1,4 @@
-const { PriorityQueueMax, PriorityQueueMin } = require("./priority-queue");
+import { PriorityQueueMax, PriorityQueueMin } from "../PriorityQueue";
 
 describe("Priority Queue Max", () => {
   test("should instantiate priority queue with blank array", () => {
@@ -60,7 +60,7 @@ describe("Priority Queue Max", () => {
       expect(pq.size).toEqual(1);
       expect(pq.queue.length).toEqual(1);
       const result = pq.dequeue();
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.size).toEqual(0);
       expect(pq.queue.length).toEqual(0);
     });
@@ -77,12 +77,12 @@ describe("Priority Queue Max", () => {
       const result = pq.dequeue();
       expect(pq.size).toEqual(2);
       expect(pq.queue.length).toEqual(2);
-      expect(result.priority).toEqual(5);
+      expect(result!.priority).toEqual(5);
       expect(pq.queue[0].priority).toEqual(3);
       const resultTwo = pq.dequeue();
       expect(pq.size).toEqual(1);
       expect(pq.queue.length).toEqual(1);
-      expect(resultTwo.priority).toEqual(3);
+      expect(resultTwo!.priority).toEqual(3);
       expect(pq.queue[0].priority).toEqual(1);
     });
 
@@ -95,7 +95,7 @@ describe("Priority Queue Max", () => {
       const result = pq.dequeue();
       expect(pq.size).toEqual(0);
       expect(pq.queue.length).toEqual(0);
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.queue[0]).toEqual(undefined);
       const resultTwo = pq.dequeue();
       expect(pq.size).toEqual(0);
@@ -119,15 +119,15 @@ describe("Priority Queue Max", () => {
 
       let result = pq.dequeue();
       expect(pq.size).toEqual(2);
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.queue[0].priority).toEqual(2);
       result = pq.dequeue();
       expect(pq.size).toEqual(1);
-      expect(result.priority).toEqual(2);
+      expect(result!.priority).toEqual(2);
       expect(pq.queue[0].priority).toEqual(1);
       result = pq.dequeue();
       expect(pq.size).toEqual(0);
-      expect(result.priority).toEqual(1);
+      expect(result!.priority).toEqual(1);
       expect(pq.queue[0]).toEqual(undefined);
       result = pq.dequeue();
       expect(pq.size).toEqual(0);
@@ -156,7 +156,7 @@ describe("Priority Queue Max", () => {
 
       let result = pq.dequeue();
       expect(pq.size).toEqual(4);
-      expect(result.priority).toEqual(7);
+      expect(result!.priority).toEqual(7);
       expect(pq.queue[0].priority).toEqual(5);
       expect(pq.queue[1].priority).toEqual(2);
       expect(pq.queue[2].priority).toEqual(3);
@@ -164,25 +164,25 @@ describe("Priority Queue Max", () => {
 
       result = pq.dequeue();
       expect(pq.size).toEqual(3);
-      expect(result.priority).toEqual(5);
+      expect(result!.priority).toEqual(5);
       expect(pq.queue[0].priority).toEqual(3);
       expect(pq.queue[1].priority).toEqual(2);
       expect(pq.queue[2].priority).toEqual(1);
 
       result = pq.dequeue();
       expect(pq.size).toEqual(2);
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.queue[0].priority).toEqual(2);
       expect(pq.queue[1].priority).toEqual(1);
 
       result = pq.dequeue();
       expect(pq.size).toEqual(1);
-      expect(result.priority).toEqual(2);
+      expect(result!.priority).toEqual(2);
       expect(pq.queue[0].priority).toEqual(1);
 
       result = pq.dequeue();
       expect(pq.size).toEqual(0);
-      expect(result.priority).toEqual(1);
+      expect(result!.priority).toEqual(1);
       expect(pq.queue[0]).toEqual(undefined);
 
       result = pq.dequeue();
@@ -252,7 +252,7 @@ describe("Priority Queue Min", () => {
       expect(pq.size).toEqual(1);
       expect(pq.queue.length).toEqual(1);
       const result = pq.dequeue();
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.size).toEqual(0);
       expect(pq.queue.length).toEqual(0);
     });
@@ -269,12 +269,12 @@ describe("Priority Queue Min", () => {
       const result = pq.dequeue();
       expect(pq.size).toEqual(2);
       expect(pq.queue.length).toEqual(2);
-      expect(result.priority).toEqual(1);
+      expect(result!.priority).toEqual(1);
       expect(pq.queue[0].priority).toEqual(3);
       const resultTwo = pq.dequeue();
       expect(pq.size).toEqual(1);
       expect(pq.queue.length).toEqual(1);
-      expect(resultTwo.priority).toEqual(3);
+      expect(resultTwo!.priority).toEqual(3);
       expect(pq.queue[0].priority).toEqual(5);
     });
 
@@ -287,7 +287,7 @@ describe("Priority Queue Min", () => {
       const result = pq.dequeue();
       expect(pq.size).toEqual(0);
       expect(pq.queue.length).toEqual(0);
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.queue[0]).toEqual(undefined);
       const resultTwo = pq.dequeue();
       expect(pq.size).toEqual(0);
@@ -311,15 +311,15 @@ describe("Priority Queue Min", () => {
 
       let result = pq.dequeue();
       expect(pq.size).toEqual(2);
-      expect(result.priority).toEqual(1);
+      expect(result!.priority).toEqual(1);
       expect(pq.queue[0].priority).toEqual(2);
       result = pq.dequeue();
       expect(pq.size).toEqual(1);
-      expect(result.priority).toEqual(2);
+      expect(result!.priority).toEqual(2);
       expect(pq.queue[0].priority).toEqual(3);
       result = pq.dequeue();
       expect(pq.size).toEqual(0);
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.queue[0]).toEqual(undefined);
       result = pq.dequeue();
       expect(pq.size).toEqual(0);
@@ -348,7 +348,7 @@ describe("Priority Queue Min", () => {
 
       let result = pq.dequeue();
       expect(pq.size).toEqual(4);
-      expect(result.priority).toEqual(1);
+      expect(result!.priority).toEqual(1);
       expect(pq.queue[0].priority).toEqual(2);
       expect(pq.queue[1].priority).toEqual(3);
       expect(pq.queue[2].priority).toEqual(5);
@@ -356,25 +356,25 @@ describe("Priority Queue Min", () => {
 
       result = pq.dequeue();
       expect(pq.size).toEqual(3);
-      expect(result.priority).toEqual(2);
+      expect(result!.priority).toEqual(2);
       expect(pq.queue[0].priority).toEqual(3);
       expect(pq.queue[1].priority).toEqual(7);
       expect(pq.queue[2].priority).toEqual(5);
 
       result = pq.dequeue();
       expect(pq.size).toEqual(2);
-      expect(result.priority).toEqual(3);
+      expect(result!.priority).toEqual(3);
       expect(pq.queue[0].priority).toEqual(5);
       expect(pq.queue[1].priority).toEqual(7);
 
       result = pq.dequeue();
       expect(pq.size).toEqual(1);
-      expect(result.priority).toEqual(5);
+      expect(result!.priority).toEqual(5);
       expect(pq.queue[0].priority).toEqual(7);
 
       result = pq.dequeue();
       expect(pq.size).toEqual(0);
-      expect(result.priority).toEqual(7);
+      expect(result!.priority).toEqual(7);
       expect(pq.queue[0]).toEqual(undefined);
 
       result = pq.dequeue();

@@ -1,6 +1,3 @@
-import { Queue } from "./Queue.ts";
-import { Queue } from "./Queue";
-
 interface IPriorityQueueNode {
   readonly data: any;
   readonly priority: number;
@@ -10,96 +7,51 @@ class PriorityQueueNode implements IPriorityQueueNode {
   constructor(readonly data: any, readonly priority: number) {}
 }
 
-interface IPriorityQueueMax {
-  queue: Queue;
+interface IPriorityQueue {
+  queue: Array<PriorityQueueNode>;
   size: number;
+  buildQueue(data: Array<any>): void;
+  getIndexForSwap(leftIdx: number, rightIdx: number, valIdx: number): number;
+  bubbleUp(idx: number, val: { data: any; priority: number }): void;
+  bubbleDown(idx: number, val: { data: any; priority: number }): void;
+  enqueue(data: PriorityQueueNode): any;
+  getIndexForSwap(leftIdx: number, rightIdx: number, valIdx: number): number;
 }
 
-class PriorityQueueMax implements IPriorityQueueMax {
-  queue: Queue = new Queue();
+abstract class PriorityQueue implements IPriorityQueue {
+  queue: Array<PriorityQueueNode> = [];
+  size: number = 0;
+  abstract bubbleUp(idx: number, val: { data: any; priority: number }): void;
+  abstract bubbleDown(idx: number, val: { data: any; priority: number }): void;
+  abstract getIndexForSwap(
+    leftIdx: number,
+    rightIdx: number,
+    valIdx: number
+  ): number;
 
-  constructor(data: Array<any> = []) {
-    const hasDataToBeProcessed =
-      data !== undefined && Array.isArray(data) && data.length > 0;
-    if (hasDataToBeProcessed) this.buildQueue(data);
+  getNode(idx: number): PriorityQueueNode {
+    return this.queue[idx];
   }
 
-  get size(): number {
-    return this.queue.size;
+  getLastNode(): PriorityQueueNode {
+    return this.getNode(this.size - 1);
   }
 
-  buildQueue(data: Array<any>) {
+  buildQueue(data: Array<PriorityQueueNode>) {
     data.forEach(data => {
       this.enqueue(data);
     });
   }
 
-  getIndexForSwap(leftIdx, rightIdx, valIdx) {
-    const val = this.queue[valIdx];
-    const left = this.queue[leftIdx];
-    const right = this.queue[rightIdx];
-    const leftVal = left ? left.priority : -Infinity;
-    const rightVal = right ? right.priority : -Infinity;
-    if (val.priority < leftVal && val.priority < rightVal)
-      return leftVal > rightVal ? leftIdx : rightIdx;
-
-    if (val.priority < leftVal && val.priority > rightVal) return leftIdx;
-
-    return rightIdx;
-  }
-
-  bubbleUp(idx = this.size - 1, val = this.queue.dequeue()): (idx: number, val:{data: any, priority: number}) =>  {
-    const parentIdx = Math.floor((idx - 1) / 2);
-    if (idx === 0) return;
-    if (val.priority > this.queue[parentIdx].priority) {
-      [this.queue[idx], this.queue[parentIdx]] = [
-        this.queue[parentIdx],
-        this.queue[idx]
-      ];
-    }
-    return this.bubbleUp(parentIdx);
-  }
-
-  bubbleDown(idx = 0, val = this.queue[0]) {
-    const baseSibIdx = idx * 2;
-    const leftSibIdx = baseSibIdx + 1;
-    const rightSibIdx = baseSibIdx + 2;
-
-    const leftChildExists = this.queue[leftSibIdx] !== undefined;
-    const rightChildExists = this.queue[rightSibIdx] !== undefined;
-    const leftChild = leftChildExists ? this.queue[leftSibIdx] : undefined;
-    const rightChild = rightChildExists ? this.queue[rightSibIdx] : undefined;
-    if (!leftChildExists && !rightChildExists) return;
-
-    if (
-      !leftChildExists &&
-      rightChildExists &&
-      val.priority >= rightChild.priority
-    )
-      return;
-    if (
-      !rightChildExists &&
-      leftChildExists &&
-      val.priority >= leftChild.priority
-    )
-      return;
-
-    const swapIdx = this.getIndexForSwap(leftSibIdx, rightSibIdx, idx);
-
-    [this.queue[idx], this.queue[swapIdx]] = [
-      this.queue[swapIdx],
-      this.queue[idx]
-    ];
-    return this.bubbleDown(swapIdx, val);
-  }
-
-  enqueue({ data, priority }: { data: any; priority: number }) {
+  enqueue(node: PriorityQueueNode) {
     if (this.size === 0) {
-      this.queue.enqueue(new PriorityQueueNode(data, priority));
+      this.queue.push(new PriorityQueueNode(node.data, node.priority));
+      this.size++;
       return;
     }
-    this.queue.enqueue(new PriorityQueueNode(data, priority));
-    this.bubbleUp();
+    this.queue.push(new PriorityQueueNode(node.data, node.priority));
+    this.size++;
+    this.bubbleUp(this.size - 1, this.getLastNode());
     return this;
   }
 
@@ -116,7 +68,7 @@ class PriorityQueueMax implements IPriorityQueueMax {
     ];
     const val = this.queue.pop();
     this.size--;
-    this.bubbleDown();
+    this.bubbleDown(0, this.getNode(0));
     return val;
   }
 
@@ -125,111 +77,144 @@ class PriorityQueueMax implements IPriorityQueueMax {
   }
 }
 
-// expoort class PriorityQueueMin {
-//   constructor(data) {
-//     this.queue = [];
-//     this.size = 0;
-//     const hasDataToBeProcessed =
-//       data !== undefined && Array.isArray(data) && data.length > 0;
-//     if (hasDataToBeProcessed) this.buildQueue(data);
-//   }
+export class PriorityQueueMax extends PriorityQueue {
+  isMax: boolean = true;
+  isMin: boolean = false;
 
-//   buildQueue(data) {
-//     data.forEach(data => {
-//       this.enqueue(data);
-//     });
-//   }
+  constructor(data: Array<PriorityQueueNode> = []) {
+    super();
+    const hasDataToBeProcessed =
+      data !== undefined && Array.isArray(data) && data.length > 0;
+    if (hasDataToBeProcessed) this.buildQueue(data);
+  }
 
-//   getIndexForSwap(leftIdx, rightIdx, valIdx) {
-//     const val = this.queue[valIdx];
-//     const left = this.queue[leftIdx];
-//     const right = this.queue[rightIdx];
-//     const leftVal = left ? left.priority : Infinity;
-//     const rightVal = right ? right.priority : Infinity;
-//     if (val.priority > leftVal && val.priority > rightVal)
-//       return leftVal < rightVal ? leftIdx : rightIdx;
+  getIndexForSwap(leftIdx: number, rightIdx: number, valIdx: number) {
+    const val = this.queue[valIdx];
+    const left = this.queue[leftIdx];
+    const right = this.queue[rightIdx];
+    const leftVal = left ? left.priority : -Infinity;
+    const rightVal = right ? right.priority : -Infinity;
+    if (val.priority < leftVal && val.priority < rightVal)
+      return leftVal > rightVal ? leftIdx : rightIdx;
 
-//     if (val.priority > leftVal && val.priority < rightVal) return leftIdx;
+    if (val.priority < leftVal && val.priority > rightVal) return leftIdx;
 
-//     return rightIdx;
-//   }
+    return rightIdx;
+  }
 
-//   bubbleUp(idx = this.size - 1, val = this.queue[idx]) {
-//     const parentIdx = Math.floor((idx - 1) / 2);
-//     if (idx === 0) return;
-//     if (val.priority < this.queue[parentIdx].priority) {
-//       [this.queue[idx], this.queue[parentIdx]] = [
-//         this.queue[parentIdx],
-//         this.queue[idx]
-//       ];
-//     }
-//     return this.bubbleUp(parentIdx);
-//   }
+  bubbleUp(idx: number, val: { data: any; priority: number }): undefined {
+    const parentIdx = Math.floor((idx - 1) / 2);
+    if (idx === 0) return;
+    if (val.priority > this.queue[parentIdx].priority) {
+      [this.queue[idx], this.queue[parentIdx]] = [
+        this.queue[parentIdx],
+        this.queue[idx]
+      ];
+    }
+    return this.bubbleUp(parentIdx, this.getNode(parentIdx));
+  }
 
-//   bubbleDown(idx = 0, val = this.queue[0]) {
-//     const baseSibIdx = idx * 2;
-//     const leftSibIdx = baseSibIdx + 1;
-//     const rightSibIdx = baseSibIdx + 2;
+  bubbleDown(idx: number, val: { data: any; priority: number }): undefined {
+    const baseSibIdx = idx * 2;
+    const leftSibIdx = baseSibIdx + 1;
+    const rightSibIdx = baseSibIdx + 2;
 
-//     const leftChildExists = this.queue[leftSibIdx] !== undefined;
-//     const rightChildExists = this.queue[rightSibIdx] !== undefined;
-//     const leftChild = leftChildExists ? this.queue[leftSibIdx] : undefined;
-//     const rightChild = rightChildExists ? this.queue[rightSibIdx] : undefined;
-//     if (!leftChildExists && !rightChildExists) return;
+    const leftChildExists = this.getNode(leftSibIdx) !== undefined;
+    const rightChildExists = this.getNode(rightSibIdx) !== undefined;
+    const leftChild = leftChildExists ? this.getNode(leftSibIdx) : undefined;
+    const rightChild = rightChildExists ? this.getNode(rightSibIdx) : undefined;
+    if (!leftChildExists && !rightChildExists) return;
 
-//     if (
-//       !leftChildExists &&
-//       rightChildExists &&
-//       rightChild.priority >= val.priority
-//     )
-//       return;
-//     if (
-//       !rightChildExists &&
-//       leftChildExists &&
-//       leftChild.priority >= val.priority
-//     )
-//       return;
+    if (
+      !leftChildExists &&
+      rightChildExists &&
+      val.priority >= rightChild!.priority
+    )
+      return;
+    if (
+      !rightChildExists &&
+      leftChildExists &&
+      val.priority >= leftChild!.priority
+    )
+      return;
 
-//     const swapIdx = this.getIndexForSwap(leftSibIdx, rightSibIdx, idx);
+    const swapIdx = this.getIndexForSwap(leftSibIdx, rightSibIdx, idx);
 
-//     [this.queue[idx], this.queue[swapIdx]] = [
-//       this.queue[swapIdx],
-//       this.queue[idx]
-//     ];
-//     return this.bubbleDown(swapIdx, val);
-//   }
+    [this.queue[idx], this.queue[swapIdx]] = [
+      this.queue[swapIdx],
+      this.queue[idx]
+    ];
+    return this.bubbleDown(swapIdx, val);
+  }
+}
 
-//   enqueue({ data, priority }) {
-//     if (this.size === 0) {
-//       this.queue.push(new Node(data, priority));
-//       this.size++;
-//       return;
-//     }
-//     this.queue.push(new Node(data, priority));
-//     this.size++;
-//     this.bubbleUp();
-//     return this;
-//   }
+export class PriorityQueueMin extends PriorityQueue {
+  isMax: boolean = false;
+  isMin: boolean = true;
 
-//   dequeue() {
-//     if (this.size < 1) return undefined;
-//     if (this.size === 1) {
-//       this.size--;
-//       return this.queue.pop();
-//     }
+  constructor(data: Array<PriorityQueueNode> = []) {
+    super();
+    const hasDataToBeProcessed =
+      data !== undefined && Array.isArray(data) && data.length > 0;
+    if (hasDataToBeProcessed) this.buildQueue(data);
+  }
 
-//     [this.queue[0], this.queue[this.size - 1]] = [
-//       this.queue[this.size - 1],
-//       this.queue[0]
-//     ];
-//     const val = this.queue.pop();
-//     this.size--;
-//     this.bubbleDown();
-//     return val;
-//   }
+  getIndexForSwap(leftIdx: number, rightIdx: number, valIdx: number) {
+    const val = this.queue[valIdx];
+    const left = this.queue[leftIdx];
+    const right = this.queue[rightIdx];
+    const leftVal = left ? left.priority : Infinity;
+    const rightVal = right ? right.priority : Infinity;
+    if (val.priority > leftVal && val.priority > rightVal)
+      return leftVal < rightVal ? leftIdx : rightIdx;
 
-//   peek() {
-//     return this.queue[0];
-//   }
-// }
+    if (val.priority > leftVal && val.priority < rightVal) return leftIdx;
 
+    return rightIdx;
+  }
+
+  bubbleUp(idx: number, val: { data: any; priority: number }): undefined {
+    const parentIdx = Math.floor((idx - 1) / 2);
+    if (idx === 0) return;
+    if (val.priority < this.queue[parentIdx].priority) {
+      [this.queue[idx], this.queue[parentIdx]] = [
+        this.queue[parentIdx],
+        this.queue[idx]
+      ];
+    }
+    return this.bubbleUp(parentIdx, this.getNode(parentIdx));
+  }
+
+  bubbleDown(idx: number, val: { data: any; priority: number }): undefined {
+    const baseSibIdx = idx * 2;
+    const leftSibIdx = baseSibIdx + 1;
+    const rightSibIdx = baseSibIdx + 2;
+
+    const leftChildExists = this.queue[leftSibIdx] !== undefined;
+    const rightChildExists = this.queue[rightSibIdx] !== undefined;
+    const leftChild = leftChildExists ? this.queue[leftSibIdx] : undefined;
+    const rightChild = rightChildExists ? this.queue[rightSibIdx] : undefined;
+    if (!leftChildExists && !rightChildExists) return;
+
+    if (
+      !leftChildExists &&
+      rightChildExists &&
+      rightChild!.priority >= val.priority
+    )
+      return;
+    if (
+      !rightChildExists &&
+      leftChildExists &&
+      leftChild!.priority >= val.priority
+    )
+      return;
+
+    const swapIdx = this.getIndexForSwap(leftSibIdx, rightSibIdx, idx);
+
+    [this.queue[idx], this.queue[swapIdx]] = [
+      this.queue[swapIdx],
+      this.queue[idx]
+    ];
+    return this.bubbleDown(swapIdx, val);
+  }
+}
