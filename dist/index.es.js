@@ -1,4 +1,4 @@
-import { useMappedState } from 'react-use-mapped-state';
+import { useState } from 'react';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -58,6 +58,14 @@ var PriorityQueue = /** @class */ (function () {
         this.queue = [];
         this.size = 0;
     }
+    PriorityQueue.prototype.asSortedArray = function () {
+        var throwawayQueue = this.clone();
+        var results = [];
+        while (throwawayQueue.size !== 0) {
+            results.push(throwawayQueue.dequeue());
+        }
+        return results;
+    };
     PriorityQueue.prototype.getNode = function (idx) {
         return this.queue[idx];
     };
@@ -79,7 +87,6 @@ var PriorityQueue = /** @class */ (function () {
         this.queue.push(new PriorityQueueNode(node.data, node.priority));
         this.size++;
         this.bubbleUp(this.size - 1, this.getLastNode());
-        return this;
     };
     PriorityQueue.prototype.dequeue = function () {
         var _a;
@@ -243,6 +250,7 @@ var PriorityQueueMin = /** @class */ (function (_super) {
 var MappedPriorityQueue = /** @class */ (function () {
     function MappedPriorityQueue(queueType, data) {
         if (data === void 0) { data = []; }
+        this.managedState = undefined;
         var priorityQueueBase;
         if (queueType === "MAX")
             priorityQueueBase = new PriorityQueueMax(data);
@@ -250,32 +258,38 @@ var MappedPriorityQueue = /** @class */ (function () {
             priorityQueueBase = new PriorityQueueMin(data);
         else
             throw new Error("The queue type entered is not currently supported");
-        var _a = __read(useMappedState({
-            priorityQueue: priorityQueueBase
-        }), 2), priorityQueue = _a[0].priorityQueue, priorityQueueStateSetter = _a[1];
-        this.priorityQueue = priorityQueue;
-        this.priorityQueueStateSetter = priorityQueueStateSetter;
+        this.priorityQueue = priorityQueueBase;
+        this.add = this.add.bind(this);
+        this.remove = this.remove.bind(this);
+        this.managedState = useState(this.priorityQueue);
     }
     MappedPriorityQueue.prototype.getReturnValues = function () {
-        return [this.priorityQueue, this.enqueue, this.dequeue];
+        var _a = __read(this.managedState, 1), priorityQueue = _a[0];
+        return [
+            priorityQueue ? priorityQueue.asSortedArray() : [],
+            this.add,
+            this.remove
+        ];
     };
-    MappedPriorityQueue.prototype.enqueue = function (data, priority) {
-        var newQueue = this.priorityQueue.clone();
+    MappedPriorityQueue.prototype.add = function (data, priority) {
+        var _a = __read(this.managedState, 2), priorityQueue = _a[0], setQueue = _a[1];
+        var newQueue = priorityQueue.clone();
         newQueue.enqueue({ data: data, priority: priority });
-        this.priorityQueueStateSetter("priorityQueue", newQueue);
+        setQueue(newQueue);
     };
-    MappedPriorityQueue.prototype.dequeue = function () {
-        var newQueue = this.priorityQueue.clone();
-        var newVal = newQueue.dequeue();
-        this.priorityQueueStateSetter("priorityQueue", newQueue);
-        return newVal;
+    MappedPriorityQueue.prototype.remove = function () {
+        var _a = __read(this.managedState, 2), priorityQueue = _a[0], setQueue = _a[1];
+        var newQueue = priorityQueue.clone();
+        var value = newQueue.dequeue();
+        setQueue(newQueue);
+        return value;
     };
     return MappedPriorityQueue;
 }());
 
 var usePriorityQueue = function (queueType, data) {
-    var priorityQueue = new MappedPriorityQueue(queueType, data);
-    return priorityQueue.getReturnValues();
+    var queue = new MappedPriorityQueue(queueType, data);
+    return queue.getReturnValues();
 };
 
 export { usePriorityQueue };

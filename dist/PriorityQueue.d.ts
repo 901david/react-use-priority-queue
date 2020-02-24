@@ -36,10 +36,11 @@ declare abstract class PriorityQueue implements IPriorityQueue {
     }): void;
     abstract getIndexForSwap(leftIdx: number, rightIdx: number, valIdx: number): number;
     abstract clone(): any;
+    asSortedArray(): Array<PriorityQueueNode>;
     getNode(idx: number): PriorityQueueNode;
     getLastNode(): PriorityQueueNode;
     buildQueue(data: Array<PriorityQueueNode>): void;
-    enqueue(node: PriorityQueueNode): this | undefined;
+    enqueue(node: PriorityQueueNode): void;
     dequeue(): PriorityQueueNode | undefined;
     peek(): PriorityQueueNode;
 }

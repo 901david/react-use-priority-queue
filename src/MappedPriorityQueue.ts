@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useMappedState } from "react-use-mapped-state";
 import {
   PriorityQueueNode,
   PriorityQueueMax,
@@ -12,7 +11,7 @@ export interface PriorityQueueEntry {
 }
 
 export type PriorityQueueReturnValues = [
-  PriorityQueueMax | PriorityQueueMin,
+  Array<PriorityQueueNode>,
   (data: any, priority: number) => void,
   () => PriorityQueueNode | undefined
 ];
@@ -21,7 +20,7 @@ export type QueueType = "MAX" | "MIN";
 
 export class MappedPriorityQueue {
   priorityQueue: PriorityQueueMax | PriorityQueueMin;
-  priorityQueueStateSetter: (key: string, val: any) => void;
+  managedState: [any, React.Dispatch<any>] | undefined = undefined;
 
   constructor(queueType: QueueType, data: Array<PriorityQueueEntry> = []) {
     let priorityQueueBase;
@@ -29,27 +28,34 @@ export class MappedPriorityQueue {
     else if (queueType === "MIN")
       priorityQueueBase = new PriorityQueueMin(data);
     else throw new Error("The queue type entered is not currently supported");
-    const [{ priorityQueue }, priorityQueueStateSetter] = useMappedState({
-      priorityQueue: priorityQueueBase
-    });
-    this.priorityQueue = priorityQueue;
-    this.priorityQueueStateSetter = priorityQueueStateSetter;
+
+    this.priorityQueue = priorityQueueBase;
+    this.add = this.add.bind(this);
+    this.remove = this.remove.bind(this);
+    this.managedState = React.useState(this.priorityQueue);
   }
 
   getReturnValues(): PriorityQueueReturnValues {
-    return [this.priorityQueue, this.enqueue, this.dequeue];
+    const [priorityQueue] = this.managedState;
+    return [
+      priorityQueue ? priorityQueue.asSortedArray() : [],
+      this.add,
+      this.remove
+    ];
   }
 
-  enqueue(data: any, priority: number) {
-    const newQueue = this.priorityQueue.clone();
+  add(data: any, priority: number) {
+    const [priorityQueue, setQueue] = this.managedState;
+    const newQueue = priorityQueue.clone();
     newQueue.enqueue({ data, priority });
-    this.priorityQueueStateSetter("priorityQueue", newQueue);
+    setQueue(newQueue);
   }
 
-  dequeue() {
-    const newQueue = this.priorityQueue.clone();
-    const newVal = newQueue.dequeue();
-    this.priorityQueueStateSetter("priorityQueue", newQueue);
-    return newVal;
+  remove() {
+    const [priorityQueue, setQueue] = this.managedState;
+    const newQueue = priorityQueue.clone();
+    const value = newQueue.dequeue();
+    setQueue(newQueue);
+    return value;
   }
 }

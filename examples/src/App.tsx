@@ -22,11 +22,42 @@ const Wrapper = styled.div`
 `;
 interface IInitialData {}
 
-const InitialData = {};
+const InitialData = [
+  { data: "Take out trash", priority: 1 },
+  { data: "Walk the dog", priority: 4 }
+];
 
 const App = () => {
-  const [] = usePriorityQueue();
-  return <Wrapper></Wrapper>;
+  const [priorityQueue, add, remove] = usePriorityQueue("MIN", InitialData);
+
+  const enqueueNewData = () => {
+    add("Walk dog around block", Math.floor(Math.random() * 25));
+  };
+
+  const dequeueData = () => {
+    const val = remove();
+    console.log(val);
+  };
+
+  return (
+    <Wrapper>
+      <table>
+        <tr>
+          <th>TODO</th>
+          <th>Priority</th>
+        </tr>
+        {priorityQueue.length > 0 &&
+          priorityQueue.map((todo: any, idx: number) => (
+            <tr key={idx}>
+              <td>{todo.data}</td>
+              <td>{todo.priority}</td>
+            </tr>
+          ))}
+      </table>
+      <button onClick={enqueueNewData}>Enqueue Another Item</button>
+      <button onClick={dequeueData}>Dequeue Another Item</button>
+    </Wrapper>
+  );
 };
 
 export default App;

@@ -30,6 +30,17 @@ abstract class PriorityQueue implements IPriorityQueue {
   ): number;
   abstract clone(): any;
 
+  asSortedArray(): Array<PriorityQueueNode> {
+    const throwawayQueue = this.clone();
+    const results = [];
+
+    while (throwawayQueue.size !== 0) {
+      results.push(throwawayQueue.dequeue());
+    }
+
+    return results;
+  }
+
   getNode(idx: number): PriorityQueueNode {
     return this.queue[idx];
   }
@@ -53,7 +64,6 @@ abstract class PriorityQueue implements IPriorityQueue {
     this.queue.push(new PriorityQueueNode(node.data, node.priority));
     this.size++;
     this.bubbleUp(this.size - 1, this.getLastNode());
-    return this;
   }
 
   dequeue() {
