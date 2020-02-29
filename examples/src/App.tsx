@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { usePriorityQueue } from "react-use-priority-queue";
 
 import { ExampleOne } from "./ExampleOne";
+import { ExampleTwo } from "./ExampleTwo";
 
 export const Wrapper = styled.div`
   table {
@@ -27,6 +28,8 @@ const App: React.FC<{}> = () => {
   return (
     <Wrapper>
       <ExampleOne />
+      <hr />
+      <ExampleTwo />
     </Wrapper>
   );
 };

@@ -9,9 +9,9 @@ const InitialData = [
   { data: "Walk the dog - 4", priority: 4 }
 ];
 
-export const ExampleOne = () => {
+export const ExampleTwo = () => {
   const [{ priorityQueue, lastDequeuedItem }, add, remove] = usePriorityQueue(
-    "MIN",
+    "MAX",
     InitialData
   );
 
@@ -27,7 +27,7 @@ export const ExampleOne = () => {
 
   return (
     <Wrapper>
-      <h1>Example 1 - using sorted array with Min Priority Queue</h1>
+      <h1>Example 2 - using sorted array with Max Priority Queue</h1>
       <button onClick={enqueueNewData}>Enqueue Another Item</button>
       <button onClick={dequeueData}>Dequeue Another Item</button>
       <table>
