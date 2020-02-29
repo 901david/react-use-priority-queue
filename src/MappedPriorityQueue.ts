@@ -7,6 +7,13 @@ import {
   PriorityQueueMin
 } from "./PriorityQueue";
 
+type valueSetter = (reference: string | string[], value: any | any[]) => void;
+type MappedReturnValues = [any, valueSetter];
+type ComplexMappedReturnedValues = [
+  (key: any) => Map<any, any>,
+  (keys: any, vals: any) => void
+];
+
 export interface PriorityQueueEntry {
   data: any;
   priority: number;
@@ -25,7 +32,7 @@ export type QueueType = "MAX" | "MIN";
 
 export class MappedPriorityQueue {
   priorityQueue: PriorityQueueMax | PriorityQueueMin;
-  managedState: any;
+  managedState: MappedReturnValues | ComplexMappedReturnedValues;
 
   constructor(queueType: QueueType, data: Array<PriorityQueueEntry> = []) {
     let priorityQueueBase;
