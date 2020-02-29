@@ -13,6 +13,7 @@
     "@types/styled-components": "^5.0.0",
     "eslint": "^6.6.0",
     "react-scripts": "3.4.0",
+    "react-use-mapped-state": "^3.0.4",
     "react-use-priority-queue": "file:..",
     "styled-components": "^5.0.1",
     "typescript": "~3.7.2"

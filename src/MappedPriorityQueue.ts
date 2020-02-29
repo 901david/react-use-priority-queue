@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useMappedState } from "react-use-mapped-state";
+
 import {
   PriorityQueueNode,
   PriorityQueueMax,
@@ -11,16 +13,19 @@ export interface PriorityQueueEntry {
 }
 
 export type PriorityQueueReturnValues = [
-  Array<PriorityQueueNode>,
+  {
+    priorityQueue: Array<PriorityQueueNode>;
+    lastDequeuedItem: PriorityQueueNode | undefined;
+  },
   (data: any, priority: number) => void,
-  () => PriorityQueueNode | undefined
+  () => void
 ];
 
 export type QueueType = "MAX" | "MIN";
 
 export class MappedPriorityQueue {
   priorityQueue: PriorityQueueMax | PriorityQueueMin;
-  managedState: [any, React.Dispatch<any>] | undefined = undefined;
+  managedState: any;
 
   constructor(queueType: QueueType, data: Array<PriorityQueueEntry> = []) {
     let priorityQueueBase;
@@ -32,30 +37,35 @@ export class MappedPriorityQueue {
     this.priorityQueue = priorityQueueBase;
     this.add = this.add.bind(this);
     this.remove = this.remove.bind(this);
-    this.managedState = React.useState(this.priorityQueue);
+    this.managedState = useMappedState({
+      priorityQueue: this.priorityQueue,
+      lastDequeuedItem: undefined
+    });
   }
 
   getReturnValues(): PriorityQueueReturnValues {
-    const [priorityQueue] = this.managedState;
+    const [{ priorityQueue, lastDequeuedItem }] = this.managedState;
     return [
-      priorityQueue ? priorityQueue.asSortedArray() : [],
+      {
+        priorityQueue: priorityQueue ? priorityQueue.asSortedArray() : [],
+        lastDequeuedItem
+      },
       this.add,
       this.remove
     ];
   }
 
   add(data: any, priority: number) {
-    const [priorityQueue, setQueue] = this.managedState;
+    const [{ priorityQueue }, valueSetter] = this.managedState;
     const newQueue = priorityQueue.clone();
     newQueue.enqueue({ data, priority });
-    setQueue(newQueue);
+    valueSetter("priorityQueue", newQueue);
   }
 
   remove() {
-    const [priorityQueue, setQueue] = this.managedState;
+    const [{ priorityQueue }, valueSetter] = this.managedState;
     const newQueue = priorityQueue.clone();
     const value = newQueue.dequeue();
-    setQueue(newQueue);
-    return value;
+    valueSetter(["priorityQueue", "lastDequeuedItem"], [newQueue, value]);
   }
 }

@@ -99,5 +99,8 @@
       "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "/__tests__/.*\\.(ts|tsx|js)$"
+  },
+  "dependencies": {
+    "react-use-mapped-state": "^3.0.4"
   }
 }

@@ -28,7 +28,10 @@ const InitialData = [
 ];
 
 const App = () => {
-  const [priorityQueue, add, remove] = usePriorityQueue("MIN", InitialData);
+  const [{ priorityQueue, lastDequeuedItem }, add, remove] = usePriorityQueue(
+    "MIN",
+    InitialData
+  );
 
   const enqueueNewData = () => {
     add("Walk dog around block", Math.floor(Math.random() * 25));
@@ -41,6 +44,8 @@ const App = () => {
 
   return (
     <Wrapper>
+      <button onClick={enqueueNewData}>Enqueue Another Item</button>
+      <button onClick={dequeueData}>Dequeue Another Item</button>
       <table>
         <tr>
           <th>TODO</th>
@@ -54,8 +59,21 @@ const App = () => {
             </tr>
           ))}
       </table>
-      <button onClick={enqueueNewData}>Enqueue Another Item</button>
-      <button onClick={dequeueData}>Dequeue Another Item</button>
+      <hr />
+      <h1> Last Item removed</h1>
+      {lastDequeuedItem === undefined && <h4>Nothing has been dequeued</h4>}
+      {lastDequeuedItem !== undefined && (
+        <table>
+          <tr>
+            <th>TODO</th>
+            <th>Priority</th>
+          </tr>
+          <tr>
+            <td>{lastDequeuedItem.data}</td>
+            <td>{lastDequeuedItem.priority}</td>
+          </tr>
+        </table>
+      )}
     </Wrapper>
   );
 };

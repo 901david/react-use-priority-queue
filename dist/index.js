@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var React = require('react');
+var reactUseMappedState = require('react-use-mapped-state');
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -254,7 +254,6 @@ var PriorityQueueMin = /** @class */ (function (_super) {
 var MappedPriorityQueue = /** @class */ (function () {
     function MappedPriorityQueue(queueType, data) {
         if (data === void 0) { data = []; }
-        this.managedState = undefined;
         var priorityQueueBase;
         if (queueType === "MAX")
             priorityQueueBase = new PriorityQueueMax(data);
@@ -265,28 +264,33 @@ var MappedPriorityQueue = /** @class */ (function () {
         this.priorityQueue = priorityQueueBase;
         this.add = this.add.bind(this);
         this.remove = this.remove.bind(this);
-        this.managedState = React.useState(this.priorityQueue);
+        this.managedState = reactUseMappedState.useMappedState({
+            priorityQueue: this.priorityQueue,
+            lastDequeuedItem: undefined
+        });
     }
     MappedPriorityQueue.prototype.getReturnValues = function () {
-        var _a = __read(this.managedState, 1), priorityQueue = _a[0];
+        var _a = __read(this.managedState, 1), _b = _a[0], priorityQueue = _b.priorityQueue, lastDequeuedItem = _b.lastDequeuedItem;
         return [
-            priorityQueue ? priorityQueue.asSortedArray() : [],
+            {
+                priorityQueue: priorityQueue ? priorityQueue.asSortedArray() : [],
+                lastDequeuedItem: lastDequeuedItem
+            },
             this.add,
             this.remove
         ];
     };
     MappedPriorityQueue.prototype.add = function (data, priority) {
-        var _a = __read(this.managedState, 2), priorityQueue = _a[0], setQueue = _a[1];
+        var _a = __read(this.managedState, 2), priorityQueue = _a[0].priorityQueue, valueSetter = _a[1];
         var newQueue = priorityQueue.clone();
         newQueue.enqueue({ data: data, priority: priority });
-        setQueue(newQueue);
+        valueSetter("priorityQueue", newQueue);
     };
     MappedPriorityQueue.prototype.remove = function () {
-        var _a = __read(this.managedState, 2), priorityQueue = _a[0], setQueue = _a[1];
+        var _a = __read(this.managedState, 2), priorityQueue = _a[0].priorityQueue, valueSetter = _a[1];
         var newQueue = priorityQueue.clone();
         var value = newQueue.dequeue();
-        setQueue(newQueue);
-        return value;
+        valueSetter(["priorityQueue", "lastDequeuedItem"], [newQueue, value]);
     };
     return MappedPriorityQueue;
 }());
