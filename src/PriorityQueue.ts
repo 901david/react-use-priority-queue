@@ -33,7 +33,6 @@ abstract class PriorityQueue implements IPriorityQueue {
   asSortedArray(): Array<PriorityQueueNode> {
     const throwawayQueue = this.clone();
     const results = [];
-
     while (throwawayQueue.size !== 0) {
       results.push(throwawayQueue.dequeue());
     }

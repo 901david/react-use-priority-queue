@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { usePriorityQueue } from "react-use-priority-queue";
 
 import { Wrapper } from "./App";

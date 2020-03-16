@@ -383,4 +383,72 @@ describe("Priority Queue Min", () => {
       expect(pq.queue[0]).toEqual(undefined);
     });
   });
+
+  describe("asSortedArray", () => {
+    describe("When enqueing values", () => {
+      test("should correctly return sorted array when enqueing many values", () => {
+        const pq = new PriorityQueueMin();
+        const dataOne = { data: "Helloo World", priority: 3 };
+        const dataTwo = { data: "test", priority: 1 };
+        const dataThree = { data: "test beginning", priority: 5 };
+        pq.enqueue(dataOne);
+        pq.enqueue(dataTwo);
+        pq.enqueue(dataThree);
+        expect(pq.asSortedArray()).toEqual([dataTwo, dataOne, dataThree]);
+      });
+
+      test("should correctly return sorted array when enqueing many values which are the same", () => {
+        const pq = new PriorityQueueMin();
+        const data = [
+          { data: "Helloo World", priority: 3 },
+          { data: "test", priority: 1 },
+          { data: "test beginning", priority: 5 },
+          { data: "Helloo World1", priority: 3 },
+          { data: "Helloo World2", priority: 3 },
+          { data: "Helloo World3", priority: 3 },
+          { data: "Helloo World4", priority: 3 },
+          { data: "Helloo World5", priority: 3 },
+          { data: "Helloo World6", priority: 3 },
+          { data: "test beginning", priority: 5 },
+          { data: "Helloo World7", priority: 3 },
+          { data: "Helloo World8", priority: 3 },
+          { data: "Helloo World9", priority: 3 },
+          { data: "Helloo World10", priority: 3 },
+          { data: "test beginning", priority: 5 },
+          { data: "Helloo World11", priority: 3 },
+          { data: "Helloo World12", priority: 3 },
+          { data: "Helloo World13", priority: 3 },
+          { data: "Helloo World14", priority: 3 },
+          { data: "Helloo World15", priority: 3 }
+        ];
+
+        const expectedResults = [
+          { data: "test", priority: 1 },
+          { data: "Helloo World", priority: 3 },
+          { data: "Helloo World1", priority: 3 },
+          { data: "Helloo World2", priority: 3 },
+          { data: "Helloo World3", priority: 3 },
+          { data: "Helloo World4", priority: 3 },
+          { data: "Helloo World5", priority: 3 },
+          { data: "Helloo World6", priority: 3 },
+          { data: "Helloo World7", priority: 3 },
+          { data: "Helloo World8", priority: 3 },
+          { data: "Helloo World9", priority: 3 },
+          { data: "Helloo World10", priority: 3 },
+          { data: "test beginning", priority: 5 },
+          { data: "Helloo World11", priority: 3 },
+          { data: "Helloo World12", priority: 3 },
+          { data: "Helloo World13", priority: 3 },
+          { data: "Helloo World14", priority: 3 },
+          { data: "Helloo World15", priority: 3 },
+          { data: "test beginning", priority: 5 },
+          { data: "test beginning", priority: 5 }
+        ];
+
+        data.forEach(entry => pq.enqueue(entry));
+        console.log(pq.asSortedArray().map(item => item.priority));
+        expect(pq.asSortedArray()).toEqual(expectedResults);
+      });
+    });
+  });
 });

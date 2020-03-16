@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { usePriorityQueue } from "react-use-priority-queue";
 
 import { ExampleOne } from "./ExampleOne";
 import { ExampleTwo } from "./ExampleTwo";
